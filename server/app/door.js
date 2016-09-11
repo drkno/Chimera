@@ -6,19 +6,21 @@ let GPIO = require('./gpio.js'),
 	_toggleTimeout = null,
 	_toggleState = false,
 	_toggleEnd = () => {
-		GPIO.output(GPIO.GPIO21, GPIO.HIGH, () => {
-			_toggleTimeout = null;
-			_doorCurrent = !_doorCurrent;
-			_toggleState = false;
-		});
+		_toggleTimeout = null;
+		_doorCurrent = !_doorCurrent;
+		_toggleState = false;
 	},
 	_toggleStart = () => {
 		if (_toggleState) {
 			throw new Error('Cannot perform operation at this time.');
 		}
 		_toggleState = true;
-		GPIO.output(GPIO.GPIO21, GPIO.LOW, () => {
-			_toggleTimeout = setTimeout(_toggleEnd, _doorTime);
+		GPIO.output(GPIO.GPIO21, GPIO.HIGH, () => {
+			setTimeout(() => {
+				GPIO.output(GPIO.GPIO21, GPIO.LOW, () => {
+					_toggleTimeout = setTimeout(_toggleEnd, _doorTime);
+				}, 500);
+			});
 		});
 	},
 	DoorControl = {
