@@ -43,7 +43,7 @@ let GPIO = require('./gpio.js'),
 			_toggleStart();
 		},
 		close: () => {
-			if (!_doorCurrent !== 2) {
+			if (_doorCurrent !== 2) {
 				throw new Error('The door is already closed.');
 			}
 			_doorCurrent = 3;
