@@ -34,16 +34,19 @@ let GPIO = require('./gpio.js'),
 	        GPIO.cleanup();
 	    },
 		open: () => {
-			if (!_doorCurrent) {
+			if (_doorCurrent) {
 				throw new Error('The door is already open.');
 			}
 			_toggleStart();
 		},
 		close: () => {
-			if (_doorCurrent) {
+			if (!_doorCurrent) {
 				throw new Error('The door is already closed.');
 			}
 			_toggleStart();
+		},
+		getState: () => {
+			return _doorCurrent ? 'Closed' : 'Open';
 		}
 	},
 	_exitHandler = () => {
@@ -54,5 +57,7 @@ let GPIO = require('./gpio.js'),
 process.on('exit', _exitHandler);
 process.on('SIGINT', _exitHandler);
 process.on('uncaughtException', _exitHandler);
+
+DoorControl.setup();
 
 module.exports = DoorControl;

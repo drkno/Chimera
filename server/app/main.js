@@ -13,14 +13,26 @@ let setupServer = (config) => {
 exports.run = (config) => {
     let server = setupServer(config);
 
-    server.get('open', () => {
+    server.apiGet('open', () => {
         DoorControl.open();
+        server.emit('state', {
+            state: DoorControl.getState();
+        });
         return true;
     });
 
-    server.get('close', () => {
+    server.apiGet('close', () => {
         DoorControl.close();
+        server.emit('state', {
+            state: DoorControl.getState();
+        });
         return true;
+    });
+
+    server.apiGet('state', (req, res) => {
+        res.send({
+            state: DoorControl.getState();
+        });
     });
 
 	server.start();
