@@ -48,7 +48,7 @@ let GPIO = require('./gpio.js'),
 			_toggleStart();
 		},
 		getState: () => {
-			return _doorCurrent ? 'Closed' : 'Open';
+			return _doorCurrent ? 'Open' : 'Closed';
 		}
 	},
 	_exitHandler = () => {
