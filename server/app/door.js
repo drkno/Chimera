@@ -36,15 +36,17 @@ let GPIO = require('./gpio.js'),
 	        GPIO.cleanup();
 	    },
 		open: () => {
-			if (_doorCurrent !== 2) {
+			if (_doorCurrent !== 0) {
 				throw new Error('The door is already open.');
 			}
+			_doorCurrent = 1;
 			_toggleStart();
 		},
 		close: () => {
-			if (!_doorCurrent !== 0) {
+			if (!_doorCurrent !== 2) {
 				throw new Error('The door is already closed.');
 			}
+			_doorCurrent = 3;
 			_toggleStart();
 		},
 		getState: () => {

@@ -76,7 +76,7 @@ module.exports = class {
                 }
             }
 		    catch (e) {
-                //console.log(e.stack);
+                console.error(e.message || e.stack || e);
                 res.status(400).send({
                     complete: false,
                     message: e.message || 'An unknown error occurred.'
