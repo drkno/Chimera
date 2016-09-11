@@ -29,7 +29,7 @@ exports.run = (config) => {
         return true;
     });
 
-    server.apiGet('state', (req, res) => {
+    server.apiGet('door', (req, res) => {
         res.send({
             state: DoorControl.getState()
         });

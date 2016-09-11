@@ -15,9 +15,9 @@ let GPIO = require('./gpio.js'),
 			throw new Error('Cannot perform operation at this time.');
 		}
 		_toggleState = true;
-		GPIO.output(GPIO.GPIO21, GPIO.HIGH, () => {
+		GPIO.output(GPIO.GPIO21, GPIO.LOW, () => {
 			setTimeout(() => {
-				GPIO.output(GPIO.GPIO21, GPIO.LOW, () => {
+				GPIO.output(GPIO.GPIO21, GPIO.HIGH, () => {
 					_toggleTimeout = setTimeout(_toggleEnd, _doorTime);
 				});
 			}, 500);
@@ -26,7 +26,7 @@ let GPIO = require('./gpio.js'),
 	DoorControl = {
 	    setup: () => {
 	        GPIO.setup(GPIO.GPIO21, GPIO.OUT, () => {
-	            GPIO.output(GPIO.GPIO21, GPIO.LOW);
+	            GPIO.output(GPIO.GPIO21, GPIO.HIGH);
 	        });
 	    },
 	    stop: () => {
@@ -58,7 +58,7 @@ let GPIO = require('./gpio.js'),
 
 process.on('exit', _exitHandler);
 process.on('SIGINT', _exitHandler);
-process.on('uncaughtException', _exitHandler);
+//process.on('uncaughtException', _exitHandler);
 
 DoorControl.setup();
 
