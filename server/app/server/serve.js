@@ -16,20 +16,20 @@ module.exports = class {
                 '': './../../www/'
             }
         }
-    
+
         this.serverPort = port ? port : 8080;
         this.express = express();
         this.server = http.Server(this.express);
-    
+
         let authMiddleware = auth.basicUsers(userManager, ignoredAuthConfig);
-    
+
         if (eventsRoot !== null && eventsRoot !== '') {
             this.io = socketio(this.server, { path: eventsRoot });
             this.io.use(function (socket, next) {
                 socket.request.ip = socket.handshake.address;
                 authMiddleware(socket.request, socket.request.res, next);
             });
-        
+
             let eventsContainer = this.eventsContainer = {};
             this.io.on('connection', (socket) => {
                 if (eventsContainer['connection']) {
@@ -37,7 +37,7 @@ module.exports = class {
                         eventsContainer['connection'][i](socket);
                     }
                 }
-            
+
                 for (let event in eventsContainer) {
                     if (!eventsContainer.hasOwnProperty(event) || event === 'connection') {
                         continue;
@@ -70,12 +70,17 @@ module.exports = class {
             try {
                 res.contentType("application/json");
                 if (func(req, res)) {
-                    res.status(200).send('{"complete":true}');
+                    res.status(200).send({
+                        complete: true
+                    });
                 }
             }
 		    catch (e) {
-                console.log(e.stack);
-                res.status(400).send('{"complete":false}');
+                //console.log(e.stack);
+                res.status(400).send({
+                    complete: false,
+                    message: e.message || 'An unknown error occurred.'
+                });
             }
         });
     }

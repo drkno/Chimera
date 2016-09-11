@@ -1,13 +1,13 @@
 'use strict';
 
 let GPIO = require('./gpio.js'),
-	_doorTime = 10000,
-	_doorCurrent = false,
+	_doorTime = 16000,
+	_doorCurrent = 0,
 	_toggleTimeout = null,
 	_toggleState = false,
 	_toggleEnd = () => {
 		_toggleTimeout = null;
-		_doorCurrent = !_doorCurrent;
+		_doorCurrent = (_doorCurrent + 1) % 4;
 		_toggleState = false;
 	},
 	_toggleStart = () => {
@@ -36,19 +36,25 @@ let GPIO = require('./gpio.js'),
 	        GPIO.cleanup();
 	    },
 		open: () => {
-			if (_doorCurrent) {
+			if (_doorCurrent !== 2) {
 				throw new Error('The door is already open.');
 			}
 			_toggleStart();
 		},
 		close: () => {
-			if (!_doorCurrent) {
+			if (!_doorCurrent !== 0) {
 				throw new Error('The door is already closed.');
 			}
 			_toggleStart();
 		},
 		getState: () => {
-			return _doorCurrent ? 'Open' : 'Closed';
+			switch(_doorCurrent) {
+				case 0: return 'Closed';
+				case 1: return 'Opening';
+				case 2: return 'Open';
+				case 3: return 'Closing';
+				default: throw new Error('Invalid internal state of door position.');
+			}
 		}
 	},
 	_exitHandler = () => {
@@ -58,7 +64,7 @@ let GPIO = require('./gpio.js'),
 
 process.on('exit', _exitHandler);
 process.on('SIGINT', _exitHandler);
-//process.on('uncaughtException', _exitHandler);
+process.on('uncaughtException', _exitHandler);
 
 DoorControl.setup();
 

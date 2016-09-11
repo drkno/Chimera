@@ -31,6 +31,7 @@ exports.run = (config) => {
 
     server.apiGet('door', (req, res) => {
         res.send({
+            complete: true,
             state: DoorControl.getState()
         });
     });
