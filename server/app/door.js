@@ -19,8 +19,8 @@ let GPIO = require('./gpio.js'),
 			setTimeout(() => {
 				GPIO.output(GPIO.GPIO21, GPIO.LOW, () => {
 					_toggleTimeout = setTimeout(_toggleEnd, _doorTime);
-				}, 500);
-			});
+				});
+			}, 500);
 		});
 	},
 	DoorControl = {
