@@ -16,7 +16,7 @@ exports.run = (config) => {
     server.apiGet('open', () => {
         DoorControl.open();
         server.emit('state', {
-            state: DoorControl.getState();
+            state: DoorControl.getState()
         });
         return true;
     });
@@ -24,14 +24,14 @@ exports.run = (config) => {
     server.apiGet('close', () => {
         DoorControl.close();
         server.emit('state', {
-            state: DoorControl.getState();
+            state: DoorControl.getState()
         });
         return true;
     });
 
     server.apiGet('state', (req, res) => {
         res.send({
-            state: DoorControl.getState();
+            state: DoorControl.getState()
         });
     });
 
