@@ -26,7 +26,7 @@
 
         let statusUpdate = () => {
             setTimeout(statusUpdate, 2500);
-            sendRequest('status', function() {
+            sendRequest('door', function() {
                 let data = JSON.parse(this.responseText),
                     state = data.state;
                 document.getElementById('status').innerHTML = state;
