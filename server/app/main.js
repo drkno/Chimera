@@ -35,5 +35,5 @@ exports.run = (config) => {
         });
     });
 
-	server.start();
+    server.start();
 };
