@@ -1,0 +1,13 @@
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <header
+        android:fragment="nz.co.makereti.chimera.settings.SettingsActivity$WiFiPreferenceFragment"
+        android:icon="@drawable/ic_sync_black_24dp"
+        android:title="WiFi" />
+
+    <header
+        android:fragment="nz.co.makereti.chimera.settings.SettingsActivity$GaragePreferenceFragment"
+        android:icon="@drawable/ic_info_black_24dp"
+        android:title="Garage" />
+
+</preference-headers>

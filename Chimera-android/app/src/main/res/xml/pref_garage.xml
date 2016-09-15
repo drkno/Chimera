@@ -1,0 +1,35 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:defaultValue=""
+        android:id="@+id/garageServerHostname"
+        android:key="garageServerHostname"
+        android:title="Garage Server IP/Hostname"
+        android:summary="The IP/hostname of the server to connect to when controlling the garage door."
+        android:inputType="textNoSuggestions" />
+
+    <EditTextPreference
+        android:defaultValue="8080"
+        android:inputType="number"
+        android:title="Garage Server Port"
+        android:summary="The port of the server to connect to when controlling the garage door."
+        android:id="@+id/garageServerPort"
+        android:key="garageServerPort" />
+
+    <EditTextPreference
+        android:defaultValue=""
+        android:inputType="textNoSuggestions"
+        android:title="Username"
+        android:summary="The username to authenticate with the server using."
+        android:id="@+id/garageUsername"
+        android:key="garageUsername" />
+
+    <EditTextPreference
+        android:defaultValue=""
+        android:inputType="textPassword"
+        android:title="Password"
+        android:summary="The password to authenticate with the server using."
+        android:id="@+id/garagePassword"
+        android:key="garagePassword" />
+
+</PreferenceScreen>

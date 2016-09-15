@@ -1,0 +1,31 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:defaultValue="RabbitLodge"
+        android:id="@+id/garageSSIDTrigger"
+        android:key="garageSSIDTrigger"
+        android:title="Garage SSID"
+        android:summary="The SSID to look for when triggering the Garage door."
+        android:inputType="textNoSuggestions"/>
+
+    <EditTextPreference
+        android:defaultValue="1000"
+        android:id="@+id/wifiScanDelay"
+        android:key="wifiScanDelay"
+        android:title="WiFi Scan Delay"
+        android:summary="Time to wait between WiFi scans."
+        android:inputType="number" />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:id="@+id/showFoundNotification"
+        android:key="showFoundNotification"
+        android:title="Show found notification"
+        android:summary="Toggles whether a network found notification will be shown."/>
+
+    <Preference
+        android:key="clearNotification"
+        android:title="Clear Rouge Scanning Notification"
+        android:summary="Removes the scanning notification if it got stuck." />
+
+</PreferenceScreen>
