@@ -92,11 +92,7 @@ public class ControlActivity extends AppCompatActivity {
     };
 
     private void openDoor() {
-        if (true) {
-            Log.d("Control", "OPENING DOOR");
-            return;
-        }
-
+        Log.d("ControlActivity", "Open Door");
         Call<ApiResult> result = GarageDoorControl.get(getApplicationContext()).open();
         result.enqueue(new Callback<ApiResult>() {
             @Override
@@ -114,11 +110,7 @@ public class ControlActivity extends AppCompatActivity {
     }
 
     private void closeDoor() {
-        if (true) {
-            Log.d("Control", "CLOSING DOOR");
-            return;
-        }
-
+        Log.d("ControlActivity", "Close Door");
         Call<ApiResult> result = GarageDoorControl.get(getApplicationContext()).close();
         result.enqueue(new Callback<ApiResult>() {
             @Override

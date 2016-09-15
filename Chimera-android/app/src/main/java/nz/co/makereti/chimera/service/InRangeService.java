@@ -33,6 +33,7 @@ public class InRangeService extends Service {
     private final RemoteCallbackList<IInRangeCallback> callbackList;
     private final Handler handler;
     public static final int SCANNING_NOTIFICATION = 0x101;
+    public static final int FOUND_NOTIFICATION = 0x102;
 
     private WifiManager wifiManager;
     private PowerManager powerManager;
@@ -114,7 +115,8 @@ public class InRangeService extends Service {
                             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                             boolean show = sharedPreferences.getBoolean("showFoundNotification", true);
                             if (show) {
-                                buildNotification("Welcome Home!", false);
+                                Notification notification = buildNotification("Welcome Home!", false);
+                                notificationManger.notify(FOUND_NOTIFICATION, notification);
                             }
                         }
                     });
@@ -128,7 +130,8 @@ public class InRangeService extends Service {
                             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                             boolean show = sharedPreferences.getBoolean("showFoundNotification", true);
                             if (show) {
-                                buildNotification("Have A Good Day!", false);
+                                Notification notification = buildNotification("Have A Good Day!", false);
+                                notificationManger.notify(FOUND_NOTIFICATION, notification);
                             }
                         }
                     });
