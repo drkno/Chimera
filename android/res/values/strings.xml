@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">I am the Garage Door opener.</string>
+    <string name="app_name">Garage Door Opener</string>
+
+    <string name="settings_url_title">Garage URL</string>
+    <string name="settings_url_summary">The garage opener\'s webserver endpoint</string>
+
+    <string name="settings_secret_title">Shared Secret</string>
+    <string name="settings_secret_summary">The password to open the garage</string>
+
+    <string name="settings_ssid_title">House SSID</string>
+    <string name="settings_ssid_summary">Your home\'s SSID to scan for</string>
+    
+    <string name="text_button_start">Start</string>
+    <string name="text_button_stop">Stop</string>
+</resources>
