@@ -3,7 +3,7 @@ package nz.co.makereti.chimera.garage;
 import retrofit2.Call;
 import retrofit2.http.GET;
 
-public interface GarageApi {
+public interface IGarageApi {
     @GET("api/open")
     Call<ApiResult> open();
     @GET("api/close")

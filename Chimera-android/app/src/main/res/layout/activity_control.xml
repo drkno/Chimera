@@ -64,5 +64,12 @@
             android:textColor="@color/colorAccent"
             android:textStyle="bold"
             />
+
+        <TextView
+            android:text="Door Closed"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@android:color/white"
+            android:id="@+id/doorStatus"
+            android:paddingTop="50dp"/>
     </GridLayout>
 </RelativeLayout>

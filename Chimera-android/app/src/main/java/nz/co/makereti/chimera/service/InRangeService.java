@@ -41,7 +41,7 @@ public class InRangeService extends Service {
     private PowerManager.WakeLock wakeLock;
     private WifiManager.WifiLock wifiLock;
     private BroadcastReceiver onScanResult;
-    private AtomicBoolean directionFound, isLeaving;
+    private AtomicBoolean directionFound, isLeaving, ignoreFirst;
 
     public InRangeService() {
         binder = new InRangeServiceBinder();
@@ -52,6 +52,7 @@ public class InRangeService extends Service {
         handler = new Handler();
         directionFound = new AtomicBoolean(false);
         isLeaving = new AtomicBoolean(false);
+        ignoreFirst = new AtomicBoolean(false);
     }
 
     public class InRangeServiceBinder extends Binder {
@@ -63,6 +64,24 @@ public class InRangeService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return binder;
+    }
+
+    private void startNewScan() {
+        if (!wifiManager.isWifiEnabled() && !wifiManager.isScanAlwaysAvailable()) {
+            wifiManager.setWifiEnabled(true);
+            notifyCallbacks(new INotifyCallback() {
+                @Override
+                public void notify(IInRangeCallback callback) {
+                    callback.onWifiEnabled();
+                }
+            });
+        }
+
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                wifiManager.startScan();
+            }
+        }, scanWait.get());
     }
 
     @Override
@@ -79,6 +98,13 @@ public class InRangeService extends Service {
                 }
 
                 Log.d("InRangeService", "Scan results have arrived.");
+
+                if (!ignoreFirst.get()) {
+                    Log.d("InRangeService", "Ignoring first scan result.");
+                    ignoreFirst.set(true);
+                    startNewScan();
+                    return;
+                }
 
                 final List<ScanResult> scanResults = wifiManager.getScanResults();
                 Log.d("", "There are " + scanResults.size() + " scan results.");
@@ -142,21 +168,7 @@ public class InRangeService extends Service {
                     return;
                 }
 
-                if (!wifiManager.isWifiEnabled() && !wifiManager.isScanAlwaysAvailable()) {
-                    wifiManager.setWifiEnabled(true);
-                    notifyCallbacks(new INotifyCallback() {
-                        @Override
-                        public void notify(IInRangeCallback callback) {
-                            callback.onWifiEnabled();
-                        }
-                    });
-                }
-
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        wifiManager.startScan();
-                    }
-                }, scanWait.get());
+                startNewScan();
             }
         };
         IntentFilter scanResultIntentFilter = new IntentFilter();
@@ -230,6 +242,7 @@ public class InRangeService extends Service {
         notificationManger.notify(SCANNING_NOTIFICATION, scanningNotification);
         startForeground(SCANNING_NOTIFICATION, scanningNotification);
 
+        ignoreFirst.set(false);
         shouldScan.set(true);
         wifiManager.startScan();
 

@@ -129,6 +129,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
             bindPreferenceSummaryToValue(findPreference("garageServerHostname"));
             bindPreferenceSummaryToValue(findPreference("garageServerPort"));
+            bindPreferenceSummaryToValue(findPreference("garageServerCameraPort"));
             bindPreferenceSummaryToValue(findPreference("garageUsername"));
         }
 

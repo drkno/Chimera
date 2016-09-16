@@ -1,6 +1,7 @@
 package nz.co.makereti.chimera;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -9,14 +10,14 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,31 +25,24 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.Timer;
+import java.util.TimerTask;
 
-import nz.co.makereti.chimera.garage.ApiResult;
+import nz.co.makereti.chimera.garage.DoorStatus;
 import nz.co.makereti.chimera.garage.GarageDoorControl;
+import nz.co.makereti.chimera.garage.IGarageStatus;
 import nz.co.makereti.chimera.service.IInRangeCallback;
 import nz.co.makereti.chimera.service.InRangeService;
 import nz.co.makereti.chimera.settings.SettingsActivity;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class ControlActivity extends AppCompatActivity {
 
     private Intent service;
     private InRangeService inRangeService;
-    private AtomicBoolean doorState = new AtomicBoolean(false);
+    private Timer timer;
 
     private IInRangeCallback inRangeCallback = new IInRangeCallback() {
-        class LocalBinder extends Binder {
-            IInRangeCallback getUnderlyingInterface() {
-                return inRangeCallback;
-            }
-        }
-
-        private IBinder binder = new LocalBinder();
+        private IBinder binder = new Binder();
 
         @Override
         public IBinder asBinder() {
@@ -73,59 +67,23 @@ public class ControlActivity extends AppCompatActivity {
 
         @Override
         public void onSSIDFound() {
-            openDoor();
+            GarageDoorControl.openDoor(getApplicationContext());
             toggleStop();
         }
 
         @Override
         public void onSSIDLost() {
-            closeDoor();
+            GarageDoorControl.closeDoor(getApplicationContext());
             toggleStop();
         }
 
         @Override
         public void onDirectionFound(boolean direction) {
             if (direction) {
-                openDoor();
+                GarageDoorControl.openDoor(getApplicationContext());
             }
         }
     };
-
-    private void openDoor() {
-        Log.d("ControlActivity", "Open Door");
-        Call<ApiResult> result = GarageDoorControl.get(getApplicationContext()).open();
-        result.enqueue(new Callback<ApiResult>() {
-            @Override
-            public void onResponse(Call<ApiResult> call, Response<ApiResult> response) {
-                Toast.makeText(getApplicationContext(), "The garage door was opened for you.", Toast.LENGTH_LONG).show();
-                doorState.set(true);
-            }
-
-            @Override
-            public void onFailure(Call<ApiResult> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "Hmmmm. The garage door refuses to open.", Toast.LENGTH_LONG).show();
-                Log.wtf("ControlActivity", "Failed to open the door.", t);
-            }
-        });
-    }
-
-    private void closeDoor() {
-        Log.d("ControlActivity", "Close Door");
-        Call<ApiResult> result = GarageDoorControl.get(getApplicationContext()).close();
-        result.enqueue(new Callback<ApiResult>() {
-            @Override
-            public void onResponse(Call<ApiResult> call, Response<ApiResult> response) {
-                Toast.makeText(getApplicationContext(), "The garage door was closed for you.", Toast.LENGTH_LONG).show();
-                doorState.set(false);
-            }
-
-            @Override
-            public void onFailure(Call<ApiResult> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "Hmmmm. The garage door refuses to close.", Toast.LENGTH_LONG).show();
-                Log.wtf("ControlActivity", "Failed to close the door.", t);
-            }
-        });
-    }
 
     protected ServiceConnection mServerConn = new ServiceConnection() {
         @Override
@@ -177,9 +135,39 @@ public class ControlActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        timer.cancel();
+        timer.purge();
+        timer = null;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        final TextView doorStatus = (TextView) findViewById(R.id.doorStatus);
+        final Context context = getApplicationContext();
+        final IGarageStatus status = new IGarageStatus() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onDoorStatus(DoorStatus state) {
+                doorStatus.setText("Door " + state.toString());
+            }
+        };
+        final long period = 1000;
+        timer = new Timer(true);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                GarageDoorControl.getDoorStatus(context, status);
+            }
+        }, 0, period);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-
         stopService(service);
         unbindService(mServerConn);
         stopService(service);
@@ -195,14 +183,16 @@ public class ControlActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
         }
-
+        else {
+            startActivity(new Intent(this, CameraActivity.class));
+        }
         return super.onOptionsItemSelected(item);
     }
 
+    @SuppressLint("SetTextI18n")
     private void toggleStop() {
         final TextView scanningText = (TextView) findViewById(R.id.toggleScanningText);
         final ImageButton scanButton = (ImageButton) findViewById(R.id.toggleScanningButton);
@@ -210,6 +200,7 @@ public class ControlActivity extends AppCompatActivity {
         scanButton.setRotation(0);
     }
 
+    @SuppressLint("SetTextI18n")
     private void toggleStart() {
         final TextView scanningText = (TextView) findViewById(R.id.toggleScanningText);
         final ImageButton scanButton = (ImageButton) findViewById(R.id.toggleScanningButton);
@@ -218,7 +209,6 @@ public class ControlActivity extends AppCompatActivity {
     }
 
     public void toggleScanning(View view) {
-
         if (inRangeService.isScanning()) {
             inRangeService.stopScanning();
             toggleStop();
@@ -234,11 +224,17 @@ public class ControlActivity extends AppCompatActivity {
     }
 
     public void toggleDoor(View view) {
-        if (doorState.get()) {
-            closeDoor();
-        }
-        else {
-            openDoor();
-        }
+        GarageDoorControl.getDoorStatus(getApplicationContext(), new IGarageStatus() {
+            @Override
+            public void onDoorStatus(DoorStatus state) {
+                if (state == DoorStatus.Open) {
+                    GarageDoorControl.closeDoor(getApplicationContext());
+                } else if (state == DoorStatus.Closed) {
+                    GarageDoorControl.openDoor(getApplicationContext());
+                } else {
+                    Toast.makeText(getApplicationContext(), "Can not do that at this time...", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 }

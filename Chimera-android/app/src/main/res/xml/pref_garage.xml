@@ -17,6 +17,14 @@
         android:key="garageServerPort" />
 
     <EditTextPreference
+        android:defaultValue="8082"
+        android:inputType="number"
+        android:title="Garage Camera Port"
+        android:summary="The port of the server to connect to when viewing the garage camera."
+        android:id="@+id/garageServerCameraPort"
+        android:key="garageServerCameraPort" />
+
+    <EditTextPreference
         android:defaultValue=""
         android:inputType="textNoSuggestions"
         android:title="Username"

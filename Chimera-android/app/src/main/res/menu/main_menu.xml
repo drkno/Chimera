@@ -3,8 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="nz.ac.canterbury.csse.a440.snakes.MainActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_camera"
         android:orderInCategory="100"
+        android:title="Camera"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="101"
         android:title="Settings"
         app:showAsAction="never" />
 </menu>
