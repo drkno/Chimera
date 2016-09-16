@@ -142,6 +142,16 @@ public class InRangeService extends Service {
                     return;
                 }
 
+                if (!wifiManager.isWifiEnabled() && !wifiManager.isScanAlwaysAvailable()) {
+                    wifiManager.setWifiEnabled(true);
+                    notifyCallbacks(new INotifyCallback() {
+                        @Override
+                        public void notify(IInRangeCallback callback) {
+                            callback.onWifiEnabled();
+                        }
+                    });
+                }
+
                 handler.postDelayed(new Runnable() {
                     public void run() {
                         wifiManager.startScan();

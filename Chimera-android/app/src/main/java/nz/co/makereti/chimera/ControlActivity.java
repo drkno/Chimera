@@ -168,6 +168,11 @@ public class ControlActivity extends AppCompatActivity {
             requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 0x01);
             return false;
         }
+
+        if (checkSelfPermission(Manifest.permission.WAKE_LOCK) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.WAKE_LOCK}, 0x02);
+            return false;
+        }
         return true;
     }
 
