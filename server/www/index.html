@@ -1,51 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-ng-app="chimeraApp">
     <head>
-        <title>Door Control</title>
+        <title>Chimera</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+        <meta content="utf-8" http-equiv="encoding">
+        <link rel="shortcut icon" href="/favicon.ico" />
+
+        <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet" />
+        <script src="bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="bower_components/Chart.js/Chart.min.js"></script>
+        <script src="bower_components/socket.io-client/socket.io.js"></script>
+        <script src="bower_components/angular/angular.min.js"></script>
+        <script src="bower_components/angular-route/angular-route.min.js"></script>
+        <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+        <script src="bower_components/angular-socket-io/socket.min.js"></script>
+
+        <script src="js/app.js"></script>
+        <script src="js/templateController.js"></script>
+        <script src="js/doorController.js"></script>
         <base href="/">
     </head>
     <body>
-        <script>
-        let sendRequest = (apiCall, callback) => {
-            let xhttp = new XMLHttpRequest();
-            if (callback) {
-                xhttp.addEventListener("load", callback);
-            }
-            xhttp.open("GET", "/api/" + apiCall, true);
-            xhttp.send();
-        };
-
-        let openDoor = () => {
-            sendRequest('open');
-        };
-
-        let closeDoor = () => {
-            sendRequest('close');
-        };
-
-        let statusUpdate = () => {
-            setTimeout(statusUpdate, 2500);
-            sendRequest('door', function() {
-                let data = JSON.parse(this.responseText),
-                    state = data.state;
-                document.getElementById('status').innerHTML = state;
-            });
-        };
-
-        statusUpdate();
-        </script>
-
-        <p>
-            Door Status: <span id="status">Unknown</span>
-        </p>
-        <p>
-            <input type="button" value="Open Door" onclick="openDoor()" />
-        </p>
-        <p>
-            <input type="button" value="Close Door" onclick="closeDoor()" />
-        </p>
-
-        <iframe height="500" width="1000" frameborder="0" scrolling="no" onload="resizeIframe(this)" src="http://garage.harest.makereti.co.nz/"></iframe>
+        <div data-ng-include data-src="'pages/template.html'"></div>
+        <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     </body>
 </html>

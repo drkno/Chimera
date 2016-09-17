@@ -8,7 +8,12 @@
 exports.dir = (htmlRoot) => {
     for (let key in htmlRoot) {
         if (htmlRoot.hasOwnProperty(key)) {
-            htmlRoot[key] = path.resolve(path.join(__dirname, htmlRoot[key]));
+            if (path.resolve(htmlRoot[key]) === path.normalize(htmlRoot[key]).replace(/[\/|\\]$/, '')) {
+                htmlRoot[key] = path.resolve(__dirname, htmlRoot[key]);
+            }
+            else {
+                htmlRoot[key] = path.resolve(path.join(__dirname, htmlRoot[key]));
+            }
         }
     }
 

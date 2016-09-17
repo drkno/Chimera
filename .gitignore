@@ -9,3 +9,5 @@
 *.DS_Store
 /android/build
 /android/captures
+/server/node_modules
+/server/bower_components

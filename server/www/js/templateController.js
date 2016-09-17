@@ -1,5 +1,6 @@
-﻿wudhaghControllers.controller('TemplateController', ['$scope', '$location', 'socket',
+chimeraControllers.controller('TemplateController', ['$scope', '$location', 'socket',
     function ($scope, $location, socket) {
+        $scope.appName = AppName;
         $scope.offline = false;
 
         $scope.getRoutes = function() {

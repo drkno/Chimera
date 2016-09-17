@@ -1,6 +1,12 @@
 'use strict';
 
-let pi_gpio = require('rpi-gpio');
+let pi_gpio;
+try {
+	pi_gpio = require('rpi-gpio');
+}
+catch(e) {
+	pi_gpio = require('./gpioshim.js');
+}
 
 class GPIO {
 	constructor() {
