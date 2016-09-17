@@ -99,13 +99,6 @@ public class InRangeService extends Service {
 
                 Log.d("InRangeService", "Scan results have arrived.");
 
-                if (!ignoreFirst.get()) {
-                    Log.d("InRangeService", "Ignoring first scan result.");
-                    ignoreFirst.set(true);
-                    startNewScan();
-                    return;
-                }
-
                 final List<ScanResult> scanResults = wifiManager.getScanResults();
                 Log.d("", "There are " + scanResults.size() + " scan results.");
                 final String ssid = scanSSID.get();
@@ -113,18 +106,27 @@ public class InRangeService extends Service {
                     return; // prevent null reference
                 }
 
-                boolean networkFound = false;
+                ScanResult networkFound = null;
                 for (final ScanResult ap : scanResults) {
                     if (ap.SSID.equals(ssid)) {
-                        networkFound = true;
+                        networkFound = ap;
                         break;
                     }
                 }
 
+                if (!ignoreFirst.get()) {
+                    Log.d("InRangeService", "Ignoring first scan result.");
+                    if (networkFound == null || networkFound.level > -150) {
+                        ignoreFirst.set(true);
+                    }
+                    startNewScan();
+                    return;
+                }
+
                 if (!directionFound.get()) {
                     directionFound.set(true);
-                    isLeaving.set(networkFound);
-                    Log.d("InRangeService", "You are " + (networkFound ? "leaving." : "arriving."));
+                    isLeaving.set(networkFound != null);
+                    Log.d("InRangeService", "You are " + (networkFound != null ? "leaving." : "arriving."));
                     notifyCallbacks(new INotifyCallback() {
                         @Override
                         public void notify(IInRangeCallback callback) {
@@ -133,7 +135,7 @@ public class InRangeService extends Service {
                     });
                 }
 
-                if (networkFound && !isLeaving.get()) {
+                if (networkFound != null && !isLeaving.get()) {
                     notifyCallbacks(new INotifyCallback() {
                         @Override
                         public void notify(IInRangeCallback callback) {
@@ -148,7 +150,7 @@ public class InRangeService extends Service {
                     });
                     stopScanning();
                 }
-                else if (!networkFound && isLeaving.get()) {
+                else if (networkFound == null && isLeaving.get()) {
                     notifyCallbacks(new INotifyCallback() {
                         @Override
                         public void notify(IInRangeCallback callback) {

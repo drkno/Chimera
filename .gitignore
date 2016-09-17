@@ -1,3 +1,11 @@
-*config.json
-*users.json
+/server/config.json
+/server/users.json
 *build*
+*.iml
+/android/.gradle
+/android/local.properties
+/android/.idea/workspace.xml
+/android/.idea/libraries
+*.DS_Store
+/android/build
+/android/captures
