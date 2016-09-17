@@ -1,5 +1,6 @@
 chimeraControllers.controller('DoorController', ['$scope', '$http', '$window', 'socket', function ($scope, $http, $window, socket) {
     $scope.videos = [];
+    $scope.webcamFeed = '';
     $scope.state = 'Loading...';
 
     $scope.check = (val) => {
@@ -37,7 +38,8 @@ chimeraControllers.controller('DoorController', ['$scope', '$http', '$window', '
     socket.emit('videos');
 
     socket.on('state', (data) => {
-        $scope.state = data;
+        $scope.state = data.state;
+        $scope.webcamFeed = data.webcamFeed;
     });
 
     socket.emit('state');

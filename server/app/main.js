@@ -62,7 +62,10 @@ exports.run = (config) => {
     });
 
     server.on('state', (socket) => {
-        socket.emit('state', DoorControl.getState());
+        socket.emit('state', {
+            state: DoorControl.getState(),
+            webcamFeed: config.webcamFeed
+        });
     });
 
     DoorControl.on('change', (state) => {
