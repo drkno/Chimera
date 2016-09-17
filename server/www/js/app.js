@@ -13,6 +13,12 @@ routes = [
         templateUrl: 'pages/door.html',
         controller: 'DoorController',
         name: 'Garage Door'
+    },
+    {
+        path: '/audit',
+        templateUrl: 'pages/auditLog.html',
+        controller: 'AuditController',
+        name: 'Audit Log'
     }
 ],
 

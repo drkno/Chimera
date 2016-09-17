@@ -26,15 +26,18 @@ exports.basicUsers = (userManager, ignoredAuthConfig) => {
                 ip = '127.0.0.1';
             }
         }
+        req.ipv4 = ip;
 
         for (let range of ignoredAuthConfig.ignoredRanges) {
             if (ip.startsWith(range)) {
+                req.authorizedUser = 'None (Exempt IP)';
                 return next();
             }
         }
 
         for (let ipath of ignoredAuthConfig.ignoredPaths) {
             if (req.url.startsWith(ipath)) {
+                req.authorizedUser = 'None (Exempt IP)';
                 return next();
             }
         }
@@ -46,6 +49,7 @@ exports.basicUsers = (userManager, ignoredAuthConfig) => {
         };
 
         if (userManager.validateUser(user.name, user.pass)) {
+            req.authorizedUser = user.name;
             return next();
         }
         return unauthorised(res);

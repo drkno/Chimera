@@ -11,3 +11,4 @@
 /android/captures
 /server/node_modules
 /server/bower_components
+/server/audit.log

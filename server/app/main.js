@@ -1,9 +1,10 @@
 'use strict';
 
-let Server = require('./server/serve.js'),
+const Server = require('./server/serve.js'),
     UserManager = require('./users/users.js'),
     DoorControl = require('./door.js'),
-    VideoWatch = require('./videos.js');
+    VideoWatch = require('./videos.js'),
+    AuditLog = require('./audit.js');
 
 let setupServer = (config) => {
     let userManager = new UserManager(config.usersFile, config.passwordAlgorithm),
@@ -24,13 +25,17 @@ exports.run = (config) => {
     let videos = new VideoWatch(config.videosDirectory),
         server = setupServer(config);
 
-    server.apiGet('open', () => {
+    server.apiGet('open', (req) => {
         DoorControl.open();
+        AuditLog.log('Open Door', req.authorizedUser, req.ipv4,
+            req.useragent.browser + ' ' + req.useragent.version + ' on ' + req.useragent.os);
         return true;
     });
 
-    server.apiGet('close', () => {
+    server.apiGet('close', (req) => {
         DoorControl.close();
+        AuditLog.log('Close Door', req.authorizedUser, req.ipv4,
+            req.useragent.browser + ' ' + req.useragent.version + ' on ' + req.useragent.os);
         return true;
     });
 
@@ -43,6 +48,8 @@ exports.run = (config) => {
 
     server.on('videos', (socket, data) => {
         if (data && data.delete) {
+            AuditLog.log('Delete Video (' + data.delete + ')', socket.request.authorizedUser, socket.request.ipv4,
+                socket.request.useragent.browser + ' ' + socket.request.useragent.version + ' on ' + socket.request.useragent.os);
             videos.delete(data.delete);
         }
         else {
@@ -60,6 +67,15 @@ exports.run = (config) => {
 
     DoorControl.on('change', (state) => {
         server.emit('state', state);
+    });
+
+    server.apiGet('auditLog', (req, res) => {
+        AuditLog.readLog((data) => {
+            res.send({
+                success: true,
+                data: data
+            });
+        });
     });
 
     server.start();

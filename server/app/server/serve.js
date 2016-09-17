@@ -4,6 +4,7 @@ let express = require('express'),
     socketio = require('socket.io'),
     http = require('http'),
     bodyParser = require('body-parser'),
+    useragent = require('express-useragent'),
     auth = require('./auth.js'),
     directory = require('./directory.js');
 
@@ -21,13 +22,19 @@ module.exports = class {
         this.express = express();
         this.server = http.Server(this.express);
 
-        let authMiddleware = auth.basicUsers(userManager, ignoredAuthConfig);
+        let authMiddleware = auth.basicUsers(userManager, ignoredAuthConfig),
+            userAgentMiddleware = useragent.express();
 
         if (eventsRoot !== null && eventsRoot !== '') {
             this.io = socketio(this.server, { path: eventsRoot });
-            this.io.use(function (socket, next) {
+            this.io.use((socket, next) => {
                 socket.request.ip = socket.handshake.address;
                 authMiddleware(socket.request, socket.request.res, next);
+            });
+            this.io.use((socket, next) => {
+                socket.request.ip = socket.handshake.address;
+                socket.request.res.locals = {};
+                userAgentMiddleware(socket.request, socket.request.res, next);
             });
 
             let eventsContainer = this.eventsContainer = {};
@@ -62,6 +69,7 @@ module.exports = class {
 
         this.express.use(bodyParser.json());
         this.express.use(authMiddleware);
+        this.express.use(userAgentMiddleware);
         this.express.use(directory.dir(htmlRoot));
     }
 

@@ -36,6 +36,7 @@ class VideoWatch extends EventEmitter {
 
 	deconstructor() {
 		this.watch.close();
+		process.exit();
 	}
 }
 
