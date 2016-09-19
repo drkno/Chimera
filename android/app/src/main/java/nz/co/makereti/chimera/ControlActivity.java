@@ -68,6 +68,7 @@ public class ControlActivity extends AppCompatActivity {
         public void onSSIDFound() {
             GarageDoorControl.openDoor(getApplicationContext());
             toggleStop();
+            startActivity(new Intent(ControlActivity.this, TimeoutActivity.class));
         }
 
         @Override
@@ -150,8 +151,13 @@ public class ControlActivity extends AppCompatActivity {
         final IGarageStatus status = new IGarageStatus() {
             @SuppressLint("SetTextI18n")
             @Override
-            public void onDoorStatus(DoorStatus state) {
-                doorStatus.setText("Door " + state.toString());
+            public void onDoorStatus(final DoorStatus state) {
+                ControlActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        doorStatus.setText("Door " + state.toString());
+                    }
+                });
             }
         };
         final long period = 1000;

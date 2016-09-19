@@ -40,4 +40,12 @@
         android:id="@+id/garagePassword"
         android:key="garagePassword" />
 
+    <EditTextPreference
+        android:defaultValue="120000"
+        android:inputType="number"
+        android:title="Shut Door Timeout (ms)"
+        android:summary="The time after which to shut the door when coming home"
+        android:id="@+id/garageShutDoorTimeout"
+        android:key="garageShutDoorTimeout" />
+
 </PreferenceScreen>

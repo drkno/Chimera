@@ -69,7 +69,7 @@ exports.run = (config) => {
     });
 
     DoorControl.on('change', (state) => {
-        server.emit('state', state);
+        server.emit('doorState', state);
     });
 
     server.apiGet('auditLog', (req, res) => {

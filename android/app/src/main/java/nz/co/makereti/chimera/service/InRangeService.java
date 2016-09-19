@@ -244,6 +244,7 @@ public class InRangeService extends Service {
         notificationManger.notify(SCANNING_NOTIFICATION, scanningNotification);
         startForeground(SCANNING_NOTIFICATION, scanningNotification);
 
+        directionFound.set(false);
         ignoreFirst.set(false);
         shouldScan.set(true);
         wifiManager.startScan();

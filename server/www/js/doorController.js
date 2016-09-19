@@ -42,6 +42,10 @@ chimeraControllers.controller('DoorController', ['$scope', '$http', '$window', '
         $scope.webcamFeed = data.webcamFeed;
     });
 
+    socket.on('doorState', (data) => {
+        $scope.state = data;
+    });
+
     socket.emit('state');
 
     $scope.openDoor = () => {

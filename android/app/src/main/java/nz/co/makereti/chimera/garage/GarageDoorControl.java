@@ -82,17 +82,23 @@ public final class GarageDoorControl {
     }
 
     public static void getDoorStatus(final Context context, final IGarageStatus garageStatus) {
-        Call<ApiResult> result = GarageDoorControl.get(context).door();
-        result.enqueue(new Callback<ApiResult>() {
-            @Override
-            public void onResponse(Call<ApiResult> call, retrofit2.Response<ApiResult> response) {
-                garageStatus.onDoorStatus(DoorStatus.valueOf(response.body().state));
-            }
+        try {
+            Call<ApiResult> result = GarageDoorControl.get(context).door();
+            result.enqueue(new Callback<ApiResult>() {
+                @Override
+                public void onResponse(Call<ApiResult> call, retrofit2.Response<ApiResult> response) {
+                    garageStatus.onDoorStatus(DoorStatus.valueOf(response.body().state));
+                }
 
-            @Override
-            public void onFailure(Call<ApiResult> call, Throwable t) {
-                garageStatus.onDoorStatus(DoorStatus.Closed);
-            }
-        });
+                @Override
+                public void onFailure(Call<ApiResult> call, Throwable t) {
+                    garageStatus.onDoorStatus(DoorStatus.Closed);
+                }
+            });
+        }
+        catch(Exception e) {
+
+            garageStatus.onDoorStatus(DoorStatus.Closed);
+        }
     }
 }

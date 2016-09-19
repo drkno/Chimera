@@ -131,6 +131,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("garageServerPort"));
             bindPreferenceSummaryToValue(findPreference("garageServerCameraPort"));
             bindPreferenceSummaryToValue(findPreference("garageUsername"));
+            bindPreferenceSummaryToValue(findPreference("garageShutDoorTimeout"));
         }
 
         @Override
