@@ -131,6 +131,11 @@ public class ControlActivity extends AppCompatActivity {
             requestPermissions(new String[]{Manifest.permission.WAKE_LOCK}, 0x02);
             return false;
         }
+
+        if (checkSelfPermission(Manifest.permission.VIBRATE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.VIBRATE}, 0x03);
+            return false;
+        }
         return true;
     }
 

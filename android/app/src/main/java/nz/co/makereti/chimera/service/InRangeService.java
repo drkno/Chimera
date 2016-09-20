@@ -130,7 +130,7 @@ public class InRangeService extends Service {
                     notifyCallbacks(new INotifyCallback() {
                         @Override
                         public void notify(IInRangeCallback callback) {
-                            callback.onDirectionFound(directionFound.get());
+                            callback.onDirectionFound(isLeaving.get());
                         }
                     });
                 }
@@ -207,6 +207,9 @@ public class InRangeService extends Service {
         builder.setContentTitle("Chimera");
         builder.setPriority(Notification.PRIORITY_HIGH);
         builder.setSmallIcon(R.mipmap.ic_launcher);
+        if (!ongoing) {
+            builder.setVibrate(new long[]{0, 1000});
+        }
         return builder.build();
     }
 
@@ -240,7 +243,7 @@ public class InRangeService extends Service {
             }
         });
 
-        Notification scanningNotification = buildNotification("Scanning for '" + ssid + "'...", false);
+        Notification scanningNotification = buildNotification("Scanning for '" + ssid + "'...", true);
         notificationManger.notify(SCANNING_NOTIFICATION, scanningNotification);
         startForeground(SCANNING_NOTIFICATION, scanningNotification);
 

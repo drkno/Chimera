@@ -26,8 +26,9 @@ public class TimeoutActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        int waitTime = Integer.parseInt(sharedPreferences.getString("garageShutDoorTimeout", "120000"));
+        int waitTime = Integer.parseInt(sharedPreferences.getString("garageShutDoorTimeout", "60000"));
         final TextView chronometer = (TextView) findViewById(R.id.countDown);
         timer = new CountDownTimer(waitTime, 1000) {
             @SuppressLint("DefaultLocale")
